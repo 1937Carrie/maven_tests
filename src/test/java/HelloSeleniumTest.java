@@ -200,8 +200,6 @@ public class HelloSeleniumTest {
         }
 
         int index;
-//        String personal_current_price, personal_old_price, common_page_current_price,
-//                common_page_old_price, vendor_code;
 
         JavascriptExecutor j = (JavascriptExecutor) driver;
 //        Вибір кількостітовару count_items
@@ -231,7 +229,6 @@ public class HelloSeleniumTest {
 
             WebElement web_personal_current_price = new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='price']/span[@class='value']")));
             personal_current_price = web_personal_current_price.getText();
-            //endregion
 
             if (!driver.findElements(By.xpath("//div[@class='price-values']/span[@class='text']/span/span")).isEmpty()) {
                 personal_old_price = new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='price-values']/span[@class='text']/span/span"))).getText();
@@ -270,31 +267,37 @@ public class HelloSeleniumTest {
             System.out.println("\n");
         }
         //endregion
-
     }
 
     @Test
     public void Test2() {
+        //region Перейти в раздел "Электроинструменты" / "Перфораторы"
         driver.get("https://planeta-instrument.com.ua/");
         driver.manage().window().maximize();
 
         Actions builder = new Actions(driver);
         builder.moveToElement(findElement(By.xpath("//div[@class='catalog-menu-lvl0-item no-numbers']/a[@href='/catalog/elektroinstrument/']"))).perform();
         builder.moveToElement(findElement(By.xpath("//a[@href='/catalog/perforatory/' and @class='menu-lvl1-link ']"))).click().perform();
+        //endregion
 
+        //region Проверить, что хотя бы у одного товара есть тикет Акция.
         Assert.assertFalse(driver.findElements(By.xpath("//div[@class='sticker discount flaticon-sale']")).isEmpty(), "There are no stock items");
+        //endregion
 
     }
 
     @Test
     public void Test3() {
+        //region Перейти в раздел "Электроинструменты" / "Болгарки"
         driver.get("https://planeta-instrument.com.ua/");
         driver.manage().window().maximize();
 
         Actions builder = new Actions(driver);
         builder.moveToElement(findElement(By.xpath("//div[@class='catalog-menu-lvl0-item no-numbers']/a[@href='/catalog/elektroinstrument/']"))).perform();
         builder.moveToElement(findElement(By.xpath("//a[@href='/catalog/bolgarki/' and @class='menu-lvl1-link ']"))).click().perform();
+        //endregion
 
+        //region Вывести "Наименование" всех товаров у которых есть иконка кредит частями на первых 3х страницах
         List<WebElement> webElementList = new ArrayList<>();
         int i1 = 0;
         while (i1 != 2) {
@@ -308,26 +311,24 @@ public class HelloSeleniumTest {
             System.out.println(i + ". " + element.getText());
             i++;
         }
+        //endregion
     }
 
     @Test
-    public void Test4(){
-        //region Description
+    public void Test4() {
+        //region В разделе "Электроинструменты" / "Шуруповерты"
         driver.get("https://planeta-instrument.com.ua/");
         driver.manage().window().maximize();
 
         Actions builder = new Actions(driver);
         builder.moveToElement(findElement(By.xpath("//div[@class='catalog-menu-lvl0-item no-numbers']/a[@href='/catalog/elektroinstrument/']"))).perform();
         builder.moveToElement(findElement(By.xpath("//a[@href='/catalog/shurupoverty/' and @class='menu-lvl1-link ']"))).click().perform();
-
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id='arrFilter_48_2132474510']/../span"))).click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("set_filter")));
         //endregion
 
-        //TODO Для 10 рандомных товаров с пометкой "Акция" (может быть % скидки а не Акция) провести расчет акционной цены относительно старой используя процент скидки.
-        //В assert упавшего теста вывести наименование товара его ожидаемую и фактическую цену.
+        //region Для 10 рандомных товаров с пометкой "Акция" (может быть % скидки а не Акция) провести расчет акционной цены относительно старой используя процент скидки.
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id='arrFilter_48_2132474510']/../span"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("set_filter")));
 
         List<WebElement> webElementNames = driver.findElements(By.xpath("//div[@class='sticker discount-w-number']//ancestor::div[@class='catalog-item list-item wow fadeIn']/div[@class='main-data']/div/a/span"));
         List<WebElement> webElementsOldPrice = driver.findElements(By.xpath("//div[@class='sticker discount-w-number']//ancestor::div[@class='catalog-item list-item wow fadeIn']//span[@class='price-old']"));
@@ -362,7 +363,10 @@ public class HelloSeleniumTest {
                     " Пораховано вручну: " + (oldPrices.get(i) - oldPrices.get(i) * discount_list.get(i) / 100) + ".");
 
         }
+        //endregion
+        //region В assert упавшего теста вывести наименование товара его ожидаемую и фактическую цену.
         Assert.assertEquals(prices_list.get(0), oldPrices.get(0) - oldPrices.get(0) * discount_list.get(0) / 100, "Ціна за " + names.get(0) + " на вітрині і вручну не співпадають");
+        //endregion
 //        Assert.assertEquals(prices_list.get(1), oldPrices.get(1) - oldPrices.get(1) * discount_list.get(1) / 100, "Ціна за " + names.get(0) + " на вітрині і вручну не співпадають");
 //        Assert.assertEquals(prices_list.get(2), oldPrices.get(2) - oldPrices.get(2) * discount_list.get(2) / 100, "Ціна за " + names.get(0) + " на вітрині і вручну не співпадають");
 //        Assert.assertEquals(prices_list.get(3), oldPrices.get(3) - oldPrices.get(3) * discount_list.get(3) / 100, "Ціна за " + names.get(0) + " на вітрині і вручну не співпадають");
